@@ -1,0 +1,144 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
+const Navbar = () => {
+  const { connected } = useWallet();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+      isScrolled ? "bg-black/60 backdrop-blur-sm text-white" : "bg-black text-white"
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center ">
+            <Link href="/" className="font-bold text-2xl font-mono">
+              NOYEAH
+            </Link>
+          </div>
+
+          <div className="hidden md:block">
+            <div className="flex items-center justify-between space-x-4">
+              <Link 
+                href="/"
+                className="px-3 py-2 rounded-md text-md hover:bg-foreground/10"
+              >
+                Home
+              </Link>
+              <Link 
+                href="/profile"
+                className="px-3 py-2 rounded-md text-md hover:bg-foreground/10"
+              >
+                Profile
+              </Link>
+              <Link 
+                href="/create-contest"
+                className="px-3 py-2 rounded-md text-md hover:bg-foreground/10"
+              >
+                Create contest
+              </Link>
+              <Link 
+                href="/bid"
+                className="px-3 py-2 rounded-md text-md hover:bg-foreground/10"
+              >
+                Bid
+              </Link>
+              
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="ml-4 flex">
+                {/* <WalletMultiButton className="!bg-foreground !text-background hover:!opacity-90" /> */}
+                <WalletMultiButton style={{
+                  backgroundColor: "#f9f9f9",
+                  color: "black",
+                  borderRadius: "10px",
+                  padding: "2px 18px",
+                  fontSize: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }} />
+
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center p-2 rounded-md hover:bg-foreground/10"
+              aria-controls="mobile-menu"
+              aria-expanded="false"
+            >
+              <span className="sr-only">Open main menu</span>
+              <svg
+                className="block h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      <div className="md:hidden" id="mobile-menu">
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <Link
+            href="/"
+            className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+          >
+            Home
+          </Link>
+          <Link
+            href="/profile"
+            className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+          >
+            Profile
+          </Link>
+          <Link
+            href="/create-poll"
+            className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+          >
+            Create contest
+          </Link>
+          <Link
+            href="/bid"
+            className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+          >
+            Bid
+          </Link>
+          <div className="mt-4 px-3">
+            <WalletMultiButton className="!bg-foreground !text-background hover:!opacity-90 w-full" />
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

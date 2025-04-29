@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  passwordHash   String?   // optional if using OAuth
+  name           String?
+  walletAddress  String?   
+  contestsCreated Contest[] @relation("ContestsCreated")
+  participations Participation[]
+  txns           TxnHistory[]
+  winners        Winner[]
+  createdAt      DateTime  @default(now())
+}
+
+model Contest {
+  id             String    @id @default(uuid())
+  title          String
+  entryAmount    Float     // participation fee per user
+  creatorId      String
+  creator        User      @relation("ContestsCreated", fields: [creatorId], references: [id])
+  // platformFee    Float     @default(0.01) // in percentage (0.01% of entry fee)
+  // creatorFee     Float     @default(0.15) // 10%-20% commission (default 15%)
+  startTime      DateTime
+  endTime        DateTime
+  status         ContestStatus @default(OPEN)
+  totalPool      Float     @default(0)
+  participations Participation[]
+  winners        Winner[]
+  txnHistory     TxnHistory[]
+  createdAt      DateTime  @default(now())
+}
+
+model Participation {
+  id         String    @id @default(uuid())
+  userId     String
+  contestId  String
+  user       User      @relation(fields: [userId], references: [id])
+  contest    Contest   @relation(fields: [contestId], references: [id])
+  amountPaid Float     // amount paid to join (entryAmount + platformFee)
+  answer     Answerenum
+  createdAt  DateTime  @default(now())
+}
+
+model Winner {
+  id         String    @id @default(uuid())
+  userId     String
+  contestId  String
+  user       User      @relation(fields: [userId], references: [id])
+  contest    Contest   @relation(fields: [contestId], references: [id])
+  reward     Float     // amount won
+  createdAt  DateTime  @default(now())
+}
+
+model TxnHistory {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  type            TxnType
+  amount          Float
+  contestId       String?   // optional, if related to a contest
+  contest         Contest?  @relation(fields: [contestId], references: [id])
+  transactionHash String?   // blockchain txn hash (Solana)
+  status          TxnStatus @default(SUCCESS)
+  createdAt       DateTime  @default(now())
+}
+
+enum ContestStatus {
+  OPEN
+  CLOSED
+  COMPLETED
+}
+
+enum TxnType {
+  CONTEST_CREATION_FEE
+  PARTICIPATION_FEE
+  // PLATFORM_FEE
+  // WIN_REWARD
+  // CREATOR_REWARD
+  // DEPOSIT
+  // WITHDRAWAL
+}
+
+enum TxnStatus {
+  SUCCESS
+  PENDING
+  FAILED
+}
+
+enum Answerenum{
+  YES
+  NO
+}
