@@ -1,6 +1,6 @@
 
 
-async function POST(req: Request){
+export async function POST(req: Request){
     const title = await req.body;
     
     if(!title){
