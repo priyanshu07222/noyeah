@@ -1,16 +1,14 @@
 export async function POST(req: Request) {
-    const body = await req.json(); // parse JSON body
-    const title = body.title;
+    const {title, endTime, entry_fee} = await req.json(); // parse JSON body
+    
 
-    if (!title) {
-        return new Response(JSON.stringify({ error: "Title is required" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-        });
+    if (!title || !endTime || !entry_fee) {
+        return Response.json({
+            message: "all fields are required"
+        })
     }
 
-    return new Response(JSON.stringify({ message: "created successfully" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-    });
+    return Response.json({
+        message: "Created successfully"
+    })
 }

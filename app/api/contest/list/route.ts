@@ -3,14 +3,12 @@ export async function GET(req: Request) {
     const title = body.title;
 
     if (!title) {
-        return new Response(JSON.stringify({ error: "Title is required" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-        });
+        return Response.json({
+            message: "All fields are reuired"
+        })
     }
 
-    return new Response(JSON.stringify({ message: "created successfully" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-    });
+    return Response.json({
+        message: "Fetched data"
+    })
 }
