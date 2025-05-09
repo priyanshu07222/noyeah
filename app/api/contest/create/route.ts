@@ -1,5 +1,9 @@
 
 
 async function POST(req: Request){
-    const body = await req.body;
+    const title = await req.body;
+    
+    if(!title){
+        return null;
+    }
 }

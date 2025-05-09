@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, Coins, Shield, Zap } from "lucide-react"
+import Image from "next/image"
 
 export function WhatItDoes() {
   return (
@@ -94,10 +95,12 @@ export function WhatItDoes() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-black to-gray-700 rounded-3xl blur-xl opacity-30"></div>
               <div className="relative glass border border-gray-800 rounded-3xl overflow-hidden">
-                <video className="w-full h-auto rounded-2xl" autoPlay loop muted playsInline>
-                  <source src="/placeholder.svg?height=400&width=600" type="video/mp4" />
+                {/* <video className="w-full h-auto rounded-2xl" autoPlay loop muted playsInline>
+                  <source src="https://images.pexels.com/photos/16513359/pexels-photo-16513359/free-photo-of-desert-silhouette-portrait.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2?height=400&width=600" type="video/mp4" />
                   Your browser does not support the video tag.
-                </video>
+                </video> */}
+
+                <img src="https://imgs.search.brave.com/2m1YEXn_ZGt_kqnz2INnDm-y9aqBoObaT2aD9Ve-lRk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTUz/OTA1ODEzL3Bob3Rv/L2Jhc2ViYWxsLWJl/dHRpbmcuanBnP3M9/NjEyeDYxMiZ3PTAm/az0yMCZjPWhFcEZL/UUdVVnVpb2VwNU9y/cHVPSnd5SzkyZnhZ/WFVUam1UTEFIYWVR/Uk09" width={4650} height={50} alt="kuch bhi" />
               </div>
             </div>
           </div>

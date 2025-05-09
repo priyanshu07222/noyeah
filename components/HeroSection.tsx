@@ -1,9 +1,9 @@
 "use client"
 import React from 'react'
-import { useWallet } from "@solana/wallet-adapter-react";
+// import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import Particles from '@tsparticles/react';
-import { loadFull } from 'tsparticles';
+// import Particles from '@tsparticles/react';
+// import { loadFull } from 'tsparticles';
 import ParticleBackground from './ParticleBackground';
 
 export default function HeroSection() {

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { ArrowRight } from "lucide-react"
+// import { ArrowRight } from "lucide-react"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 
 export function CallToAction() {

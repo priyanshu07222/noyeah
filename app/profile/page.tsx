@@ -5,7 +5,6 @@ import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import Navbar  from "@/components/Navbar"
 import { Copy, CheckCircle, XCircle, Clock } from "lucide-react"
 import { toast } from 'sonner'
 

@@ -6,7 +6,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const Navbar = () => {
-  const { connected } = useWallet();
+  // const { connected } = useWallet();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
