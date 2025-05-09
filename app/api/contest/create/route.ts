@@ -6,4 +6,8 @@ async function POST(req: Request){
     if(!title){
         return null;
     }
+
+    Response.json({
+        message: "created successfully"
+    })
 }
