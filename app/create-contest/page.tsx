@@ -86,14 +86,14 @@ const createContest = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0 bg-gray-900 border-gray-700">
-                      <Calendar
+                      {/* <Calendar
                         mode="single"
                         selected={date as any}
                         onSelect={setDate as any}
                         initialFocus
                         // disabled={(date) => date < new Date()}
                         className="bg-black text-white"
-                      />
+                      /> */}
                     </PopoverContent>
                   </Popover>
                   <p className="text-sm text-gray-400">The poll will automatically close at 23:59 UTC on this date.</p>
