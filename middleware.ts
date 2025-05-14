@@ -28,9 +28,9 @@ export default withAuth(
 // Configure which routes the middleware applies to
 export const config = {
   matcher: [
-    '/bid',
-    '/create-contest',
-    '/profile',
+    // '/bid',
+    // '/create-contest',
+    // '/profile',
     /*
      * Match all request paths except:
      * - Static files (e.g., /_next/, /favicon.ico)

@@ -8,6 +8,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 const Navbar = () => {
   // const { connected } = useWallet();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,7 +60,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="hidden md:flex items-center justify-between ">
             <div className="ml-4 flex">
                 {/* <WalletMultiButton className="!bg-foreground !text-background hover:!opacity-90" /> */}
                 <WalletMultiButton style={{
@@ -77,12 +78,13 @@ const Navbar = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center bg-black rounded-full mx-2 cursor-pointer z-50 absolute right-0">
             <button
               type="button"
               className="inline-flex items-center justify-center p-2 rounded-md hover:bg-foreground/10"
               aria-controls="mobile-menu"
               aria-expanded="false"
+              onClick={() => setShowMobileNav((prev)=> !prev)}
             >
               <span className="sr-only">Open main menu</span>
               <svg
@@ -106,7 +108,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu */}
-      <div className="md:hidden" id="mobile-menu">
+      <div className={`${showMobileNav ? `block`:`hidden`} transition-all duration-300 md:hidden bg-white text-black text-left w-48 z-10 absolute top-0 right-0 rounded-l-lg` }id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
             href="/"
@@ -133,7 +135,16 @@ const Navbar = () => {
             Bid
           </Link>
           <div className="mt-4 px-3">
-            <WalletMultiButton className="!bg-foreground !text-background hover:!opacity-90 w-full" />
+            <WalletMultiButton style={{
+                  backgroundColor: "#000",
+                  color: "white",
+                  borderRadius: "10px",
+                  padding: "2px 18px",
+                  fontSize: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }} className="!bg-foreground !text-background hover:!opacity-90 w-full" />
           </div>
         </div>
       </div>

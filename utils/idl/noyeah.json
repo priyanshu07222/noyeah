@@ -1,0 +1,458 @@
+{
+    "address": "2S2ztAYPLzQN3McM2jJqNhoycahBMpyEc1tvNLBdR2qv",
+    "metadata": {
+      "name": "noyeah_c",
+      "version": "0.1.0",
+      "spec": "0.1.0",
+      "description": "Created with Anchor"
+    },
+    "instructions": [
+      {
+        "name": "create_contest",
+        "discriminator": [
+          129,
+          189,
+          164,
+          27,
+          152,
+          242,
+          123,
+          93
+        ],
+        "accounts": [
+          {
+            "name": "signer",
+            "writable": true,
+            "signer": true
+          },
+          {
+            "name": "create_contest",
+            "writable": true,
+            "pda": {
+              "seeds": [
+                {
+                  "kind": "const",
+                  "value": [
+                    99,
+                    111,
+                    110,
+                    116,
+                    101,
+                    115,
+                    116
+                  ]
+                },
+                {
+                  "kind": "arg",
+                  "path": "title"
+                }
+              ]
+            }
+          },
+          {
+            "name": "contest_vault_account",
+            "pda": {
+              "seeds": [
+                {
+                  "kind": "const",
+                  "value": [
+                    118,
+                    97,
+                    117,
+                    108,
+                    116
+                  ]
+                },
+                {
+                  "kind": "account",
+                  "path": "create_contest"
+                }
+              ]
+            }
+          },
+          {
+            "name": "system_program",
+            "address": "11111111111111111111111111111111"
+          }
+        ],
+        "args": [
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "end_time",
+            "type": "i64"
+          },
+          {
+            "name": "entry_fee",
+            "type": "u64"
+          }
+        ]
+      },
+      {
+        "name": "finalize_contest",
+        "discriminator": [
+          16,
+          124,
+          112,
+          152,
+          40,
+          27,
+          32,
+          221
+        ],
+        "accounts": [
+          {
+            "name": "payer",
+            "writable": true,
+            "signer": true
+          },
+          {
+            "name": "contest_account",
+            "writable": true
+          },
+          {
+            "name": "participant",
+            "writable": true
+          },
+          {
+            "name": "contest_vault",
+            "writable": true
+          },
+          {
+            "name": "system_program",
+            "address": "11111111111111111111111111111111"
+          }
+        ],
+        "args": []
+      },
+      {
+        "name": "participate_contest",
+        "discriminator": [
+          239,
+          67,
+          15,
+          52,
+          177,
+          142,
+          214,
+          43
+        ],
+        "accounts": [
+          {
+            "name": "payer",
+            "writable": true,
+            "signer": true
+          },
+          {
+            "name": "participant_account",
+            "writable": true,
+            "pda": {
+              "seeds": [
+                {
+                  "kind": "const",
+                  "value": [
+                    98,
+                    105,
+                    100
+                  ]
+                },
+                {
+                  "kind": "account",
+                  "path": "payer"
+                },
+                {
+                  "kind": "account",
+                  "path": "contest_account"
+                }
+              ]
+            }
+          },
+          {
+            "name": "contest_account",
+            "writable": true
+          },
+          {
+            "name": "contest_vault",
+            "writable": true
+          },
+          {
+            "name": "system_program",
+            "address": "11111111111111111111111111111111"
+          }
+        ],
+        "args": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "bid_option",
+            "type": {
+              "defined": {
+                "name": "OptionType"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "resolve_contest",
+        "discriminator": [
+          250,
+          181,
+          233,
+          153,
+          74,
+          161,
+          231,
+          115
+        ],
+        "accounts": [
+          {
+            "name": "payer",
+            "writable": true,
+            "signer": true
+          },
+          {
+            "name": "contest",
+            "writable": true
+          }
+        ],
+        "args": [
+          {
+            "name": "answer",
+            "type": {
+              "defined": {
+                "name": "OptionType"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "accounts": [
+      {
+        "name": "CreateContestState",
+        "discriminator": [
+          8,
+          18,
+          201,
+          219,
+          255,
+          47,
+          130,
+          9
+        ]
+      },
+      {
+        "name": "ParticipantState",
+        "discriminator": [
+          94,
+          173,
+          138,
+          206,
+          211,
+          209,
+          252,
+          75
+        ]
+      }
+    ],
+    "errors": [
+      {
+        "code": 6000,
+        "name": "ContestClosed",
+        "msg": "Contest closed"
+      },
+      {
+        "code": 6001,
+        "name": "InsufficiantBidAmount",
+        "msg": "Insufficient bid amount, amount should be greater than or equal to Bid amount"
+      },
+      {
+        "code": 6002,
+        "name": "ContestNotEnded",
+        "msg": "The contest has not yet ended."
+      },
+      {
+        "code": 6003,
+        "name": "OnlyCreatorCanCallThis",
+        "msg": "Only creator can call this instruction"
+      },
+      {
+        "code": 6004,
+        "name": "AlreadyResolved",
+        "msg": "Already resolved"
+      },
+      {
+        "code": 6005,
+        "name": "ContestNotResolvedYet",
+        "msg": "Contest not resolved yet"
+      },
+      {
+        "code": 6006,
+        "name": "AlreadyClaimed",
+        "msg": "Already Claimed"
+      },
+      {
+        "code": 6007,
+        "name": "WinnerCountShouldBeGreaterThanZero",
+        "msg": "Winner count should be greater than 0"
+      }
+    ],
+    "types": [
+      {
+        "name": "ContestStatus",
+        "type": {
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Open"
+            },
+            {
+              "name": "Closed"
+            },
+            {
+              "name": "Resolved"
+            }
+          ]
+        }
+      },
+      {
+        "name": "CreateContestState",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "creator",
+              "type": "pubkey"
+            },
+            {
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "name": "start_time",
+              "type": "i64"
+            },
+            {
+              "name": "end_time",
+              "type": "i64"
+            },
+            {
+              "name": "yes_entry_price",
+              "type": "u64"
+            },
+            {
+              "name": "no_entry_price",
+              "type": "u64"
+            },
+            {
+              "name": "option_yes_pool",
+              "type": "u64"
+            },
+            {
+              "name": "option_no_pool",
+              "type": "u64"
+            },
+            {
+              "name": "total_pool",
+              "type": "u64"
+            },
+            {
+              "name": "yes_participants",
+              "type": "u64"
+            },
+            {
+              "name": "no_participants",
+              "type": "u64"
+            },
+            {
+              "name": "correct_answer",
+              "type": {
+                "defined": {
+                  "name": "OptionType"
+                }
+              }
+            },
+            {
+              "name": "status",
+              "type": {
+                "defined": {
+                  "name": "ContestStatus"
+                }
+              }
+            },
+            {
+              "name": "winner_count",
+              "type": "u64"
+            },
+            {
+              "name": "bump",
+              "type": "u8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "OptionType",
+        "type": {
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        }
+      },
+      {
+        "name": "ParticipantState",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "participant",
+              "type": "pubkey"
+            },
+            {
+              "name": "contest",
+              "type": "pubkey"
+            },
+            {
+              "name": "option",
+              "type": {
+                "defined": {
+                  "name": "OptionType"
+                }
+              }
+            },
+            {
+              "name": "amount",
+              "type": "u64"
+            },
+            {
+              "name": "price_at_bid",
+              "type": "u64"
+            },
+            {
+              "name": "is_winner",
+              "type": "bool"
+            },
+            {
+              "name": "has_claimed",
+              "type": "bool"
+            },
+            {
+              "name": "bump",
+              "type": "u8"
+            }
+          ]
+        }
+      }
+    ]
+  }
