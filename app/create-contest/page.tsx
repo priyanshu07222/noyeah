@@ -13,7 +13,8 @@ import { toast } from "sonner"
 
 
 const createContest = () => {
-    const [question, setQuestion] = useState("")
+  // title, entry_fee, end_time, wallet
+  const [title, setTitle] = useState("")
   const [date, setDate] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -21,7 +22,7 @@ const createContest = () => {
   const handleSubmit = (e:any) => {
     e.preventDefault()
 
-    if (!question.trim()) {
+    if (!title.trim()) {
       toast(
         "Missing question",)
       return
@@ -40,7 +41,7 @@ const createContest = () => {
       toast("Poll Created Successfully!",)
 
       // Reset form
-      setQuestion("")
+      setTitle("")
       setDate(null)
     }, 2000)
   }
@@ -60,8 +61,8 @@ const createContest = () => {
                   <Input
                     id="question"
                     placeholder="E.g., Will BTC reach $100k this year?"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                     className="bg-gray-900/50 border-gray-700"
                   />
                   <p className="text-sm text-gray-400">
