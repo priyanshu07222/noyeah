@@ -7,30 +7,45 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { CalendarIcon, Loader2 } from "lucide-react"
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import Calendar from "react-calendar"
+import { useWallet } from "@solana/wallet-adapter-react"
 
 
 const createContest = () => {
   // title, entry_fee, end_time, wallet
   const [title, setTitle] = useState("")
   const [date, setDate] = useState(new Date())
+  const [entryFee, setEntryFee] = useState<Number>(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showCalendar, setShowCalendar] = useState(false);
+  const wallet = useWallet();
 
 
   const handleSubmit = (e:any) => {
     e.preventDefault()
 
+    if(!wallet.connected){
+      alert("First connect your wallet")
+      return
+    }
+    
+
     if (!title.trim()) {
       toast(
-        "Missing question",)
+        "Missing title",)
       return
     }
 
     if (!date) {
-      toast("Please select a deadline for your poll.")
+      toast("Please select a deadline for your contest.")
+      return
+    }
+
+    if(!entryFee){
+      toast("Please specify the entry fee")
       return
     }
 
@@ -73,7 +88,7 @@ const createContest = () => {
 
                 <div className="space-y-2">
                   <Label>Deadline</Label>
-                  <Popover>
+                  <Popover open={showCalendar} onOpenChange={setShowCalendar}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -90,7 +105,12 @@ const createContest = () => {
                       <Calendar
                         className="bg-gray-800 text-white rounded-lg shadow-lg p-4 w-80"
                         value={date}
-                        onChange={(newDate) => newDate instanceof Date && setDate(newDate)}
+                        onChange={(newDate) => {
+                          if (newDate instanceof Date) {
+                            setDate(newDate);
+                            setShowCalendar(false);
+                          }
+                        }}
                         tileClassName={({ date, view }) =>
                           view === 'month' 
                             ? 'text-white hover:bg-gray-700 rounded-lg p-2 transition-colors' 
@@ -101,7 +121,6 @@ const createContest = () => {
                         }
                         prevLabel={<ChevronLeftIcon className="h-4 w-4" />}
                         nextLabel={<ChevronRightIcon className="h-4 w-4" />}
-                        calendarClassName="border border-gray-700"
                         tileDisabled={({ date }) => date < new Date()}
                       />
                     </PopoverContent>
