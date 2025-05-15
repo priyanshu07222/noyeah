@@ -10,12 +10,13 @@ import { format } from "date-fns"
 import { CalendarIcon, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import Calendar from "react-calendar"
 
 
 const createContest = () => {
   // title, entry_fee, end_time, wallet
   const [title, setTitle] = useState("")
-  const [date, setDate] = useState(null)
+  const [date, setDate] = useState(new Date())
   const [isSubmitting, setIsSubmitting] = useState(false)
 
 
@@ -42,7 +43,7 @@ const createContest = () => {
 
       // Reset form
       setTitle("")
-      setDate(null)
+      setDate(new Date())
     }, 2000)
   }
   return (
@@ -51,13 +52,13 @@ const createContest = () => {
         <div className="max-w-2xl mx-auto">
           <Card className="glass border-gray-800 bg-black text-white">
             <CardHeader>
-              <CardTitle className="text-2xl">Create New Poll</CardTitle>
-              <CardDescription>Create a new yes/no poll for users to bet on</CardDescription>
+              <CardTitle className="text-2xl">Create New Contest</CardTitle>
+              <CardDescription>Create a new yes/no contest for users to bet on</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="question">Question</Label>
+                  <Label htmlFor="question">Title</Label>
                   <Input
                     id="question"
                     placeholder="E.g., Will BTC reach $100k this year?"
@@ -86,14 +87,30 @@ const createContest = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0 bg-gray-900 border-gray-700">
-                      {/* add data picker here kind of cal en der */}
+                      <Calendar
+                        className="bg-gray-800 text-white rounded-lg shadow-lg p-4 w-80"
+                        value={date}
+                        onChange={(newDate) => newDate instanceof Date && setDate(newDate)}
+                        tileClassName={({ date, view }) =>
+                          view === 'month' 
+                            ? 'text-white hover:bg-gray-700 rounded-lg p-2 transition-colors' 
+                            : null
+                        }
+                        navigationLabel={({ date }) => 
+                          format(date, 'MMMM yyyy')
+                        }
+                        prevLabel={<ChevronLeftIcon className="h-4 w-4" />}
+                        nextLabel={<ChevronRightIcon className="h-4 w-4" />}
+                        calendarClassName="border border-gray-700"
+                        tileDisabled={({ date }) => date < new Date()}
+                      />
                     </PopoverContent>
                   </Popover>
-                  <p className="text-sm text-gray-400">The poll will automatically close at 23:59 UTC on this date.</p>
+                  <p className="text-sm text-gray-400">The contest will automatically closed at specified date.</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Initial Pool</Label>
+                  <Label>Entry fee</Label>
                   <div className="relative">
                     <Input
                       type="number"
@@ -106,7 +123,7 @@ const createContest = () => {
                       SOL
                     </div>
                   </div>
-                  <p className="text-sm text-gray-400 my-4">Optional: Add an initial amount to the betting pool.</p>
+                  <p className="text-sm text-gray-400 my-4">Specify the entry fee for the contest to enter.</p>
                 </div>
               </CardContent>
               <CardFooter>
@@ -121,7 +138,7 @@ const createContest = () => {
                       Creating Poll...
                     </>
                   ) : (
-                    "Create Poll"
+                    "Create Contest"
                   )}
                 </Button>
               </CardFooter>
