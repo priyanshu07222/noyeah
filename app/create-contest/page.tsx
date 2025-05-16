@@ -39,12 +39,12 @@ const createContest = async () => {
   
   const program = await getProgram(anchorWallet)
 
-  useEffect(()=>{
-    (async() => {
-      // const contestAll = await program.account
-      console.log("log is")
-    })()
-  },[])
+  // useEffect(()=>{
+  //   (async() => {
+  //     // const contestAll = await program.account
+  //     console.log("log is")
+  //   })()
+  // },[])
 
   const handleSubmit = async (e:any) => {
     e.preventDefault()
