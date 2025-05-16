@@ -1,38 +1,58 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
+import { endOfDay, format } from "date-fns"
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import Calendar from "react-calendar"
-import { useWallet } from "@solana/wallet-adapter-react"
+import { useConnection, useWallet } from "@solana/wallet-adapter-react"
+import { AnchorProvider, BN, web3 } from "@coral-xyz/anchor"
+import getProgram from "@/utils/solana"
+import * as anchor from "@coral-xyz/anchor"
+import axios from "axios"
 
 
-const createContest = () => {
+const createContest = async () => {
   // title, entry_fee, end_time, wallet
   const [title, setTitle] = useState("")
   const [date, setDate] = useState(new Date())
   const [entryFee, setEntryFee] = useState<Number>(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false);
-  const wallet = useWallet();
+  const {wallet, publicKey, signTransaction} = useWallet();
+  const {connection} = useConnection()
 
+  
+  const anchorWallet = {
+    publicKey,
+    signTransaction: wallet?.adapter.sendTransaction?.bind(wallet.adapter),
+    signAllTransactions: async (txs: any[]) => {
+      return Promise.all(txs.map(tx => wallet?.adapter.sendTransaction?.(tx, connection)));
+    },
+  } as anchor.Wallet;
+  
+  const program = await getProgram(anchorWallet)
 
-  const handleSubmit = (e:any) => {
+  useEffect(()=>{
+    (async() => {
+      const contestAll = await program.account
+    })()
+  },[])
+
+  const handleSubmit = async (e:any) => {
     e.preventDefault()
 
-    if(!wallet.connected){
+    if(!publicKey || !wallet){
       alert("First connect your wallet")
       return
     }
     
-
     if (!title.trim()) {
       toast(
         "Missing title",)
@@ -48,6 +68,41 @@ const createContest = () => {
       toast("Please specify the entry fee")
       return
     }
+
+    
+    
+    const [createContestPDA] = await web3.PublicKey.findProgramAddress([Buffer.from("contest"), Buffer.from(title)], program.programId)
+    const [contestVaultPDA] = await web3.PublicKey.findProgramAddress([Buffer.from("vault"), createContestPDA.toBuffer()], program.programId)
+    
+    // Convert date to Unix timestamp in seconds
+    const unixTimestamp = Math.floor(date.getTime() / 1000)
+    
+    const tx = await program
+        .methods
+        .createContest(title, new BN(unixTimestamp), new BN(entryFee.toString()))
+        .accounts({
+            payer: publicKey,
+            createContest: createContestPDA,
+            contestVaultAccount: contestVaultPDA,
+            systemProgram: web3.SystemProgram.programId
+        })
+        .transaction()
+
+    tx.feePayer = publicKey;
+    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  
+    // Sign transaction
+    if (!signTransaction) {
+      throw new Error("Wallet not connected");
+    }
+    const signedTx = await signTransaction(tx);
+
+    const serializedTx = signedTx.serialize();    
+
+
+    // const response = await axios.post('/api/create-contest', {title: title, entry_fee: entryFee, end_time: unixTimestamp, serializedTx})
+
+    console.log(serializedTx, "baapu")
 
     setIsSubmitting(true)
 
@@ -137,6 +192,7 @@ const createContest = () => {
                       min="0.1"
                       placeholder="0.00"
                       className="bg-gray-900/50 border-gray-700 pr-12"
+                      onChange={(e) => setEntryFee(parseInt(e.target.value))}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
                       SOL

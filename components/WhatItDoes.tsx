@@ -100,7 +100,7 @@ export function WhatItDoes() {
                   Your browser does not support the video tag.
                 </video> */}
 
-                <img src="https://imgs.search.brave.com/2m1YEXn_ZGt_kqnz2INnDm-y9aqBoObaT2aD9Ve-lRk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTUz/OTA1ODEzL3Bob3Rv/L2Jhc2ViYWxsLWJl/dHRpbmcuanBnP3M9/NjEyeDYxMiZ3PTAm/az0yMCZjPWhFcEZL/UUdVVnVpb2VwNU9y/cHVPSnd5SzkyZnhZ/WFVUam1UTEFIYWVR/Uk09" width={4650} height={50} alt="kuch bhi" />
+                <img src="bet.png" width={4650} height={50} alt="kuch bhi" />
               </div>
             </div>
           </div>
