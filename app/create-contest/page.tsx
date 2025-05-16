@@ -15,10 +15,12 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import {  BN, web3 } from "@coral-xyz/anchor"
 import getProgram from "@/utils/solana"
 import * as anchor from "@coral-xyz/anchor"
+import { LAMPORTS_PER_SOL, sendAndConfirmRawTransaction } from "@solana/web3.js"
+import axios from "axios"
 // import axios from "axios"
 
 
-const createContest = async () => {
+const createContest = () => {
   // title, entry_fee, end_time, wallet
   const [title, setTitle] = useState("")
   const [date, setDate] = useState(new Date())
@@ -37,7 +39,7 @@ const createContest = async () => {
     },
   } as anchor.Wallet;
   
-  const program = await getProgram(anchorWallet)
+  
 
   // useEffect(()=>{
   //   (async() => {
@@ -71,16 +73,18 @@ const createContest = async () => {
     }
 
     
+    const program = await getProgram(anchorWallet)
     
     const [createContestPDA] = await web3.PublicKey.findProgramAddress([Buffer.from("contest"), Buffer.from(title)], program.programId)
     const [contestVaultPDA] = await web3.PublicKey.findProgramAddress([Buffer.from("vault"), createContestPDA.toBuffer()], program.programId)
     
     // Convert date to Unix timestamp in seconds
     const unixTimestamp = Math.floor(date.getTime() / 1000)
+    const entryFeeInLamport = parseFloat(entryFee.toString()) * LAMPORTS_PER_SOL
     
     const tx = await program
         .methods
-        .createContest(title, new BN(unixTimestamp), new BN(entryFee.toString()))
+        .createContest(title, new BN(unixTimestamp), new BN(entryFeeInLamport.toString()))
         .accounts({
             payer: publicKey,
             createContest: createContestPDA,
@@ -91,31 +95,64 @@ const createContest = async () => {
 
     tx.feePayer = publicKey;
     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-  
-    // Sign transaction
+
     if (!signTransaction) {
       throw new Error("Wallet not connected");
     }
-    const signedTx = await signTransaction(tx);
 
-    const serializedTx = signedTx.serialize();    
+    try {
+      const signedTx = await signTransaction(tx);
+      const signature = await connection.sendRawTransaction(signedTx.serialize());
+      await connection.confirmTransaction(signature, 'confirmed');
+      setIsSubmitting(true)
 
+      console.log("calling api")
 
-    // const response = await axios.post('/api/create-contest', {title: title, entry_fee: entryFee, end_time: unixTimestamp, serializedTx})
+      // Only call API if transaction was successful
+      const response = await axios.post('/api/create-contest', {
+        title: title,
+        entry_fee: entryFeeInLamport,
+        end_time: unixTimestamp,
+        signature: signature
+      });
 
-    console.log(serializedTx, "baapu")
+      // Move setIsSubmitting before API call to show loading state
+      setIsSubmitting(true)
+      
+      try {
+        console.log("Calling API...")
+        const response = await axios.post('/api/create-contest', {
+          title: title,
+          entry_fee: entryFeeInLamport, 
+          end_time: unixTimestamp,
+          signature: signature
+        })
 
-    setIsSubmitting(true)
+        console.log("API Response:", response)
+        const data = response.data
+        console.log("Response Data:", data)
 
-    // Simulate submission
-    setTimeout(() => {
-      setIsSubmitting(false)
-      toast("Poll Created Successfully!",)
-
-      // Reset form
-      setTitle("")
-      setDate(new Date())
-    }, 2000)
+        if(data?.success) {
+          toast.success("Contest created successfully!")
+          setTitle("")
+          setDate(new Date())
+          setEntryFee(0)
+        } else {
+          console.error("Invalid response format:", data)
+          toast.error("Something went wrong")
+        }
+      } catch (error) {
+        console.error("API call failed:", error);
+        toast.error("Failed to create contest. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+        setEntryFee(0)
+        setDate(new Date())
+      }
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      toast.error("Failed to create contest. Please try again.");
+    }
   }
   return (
     <main className='min-h-screen bg-black text-white flex items-center justify-center'>
@@ -193,7 +230,7 @@ const createContest = async () => {
                       min="0.1"
                       placeholder="0.00"
                       className="bg-gray-900/50 border-gray-700 pr-12"
-                      onChange={(e) => setEntryFee(parseInt(e.target.value))}
+                      onChange={(e) => setEntryFee(parseFloat(e.target.value))}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
                       SOL
