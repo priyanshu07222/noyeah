@@ -115,8 +115,8 @@ export default function ContestsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedSort, setSelectedSort] = useState("deadline")
-  const [selectedBetContest, setSelectedBetContest] = useState(null)
-  const [selectedBetChoice, setSelectedBetChoice] = useState(null)
+  const [selectedBetContest, setSelectedBetContest] = useState<typeof mockContests[0] | null>(null)
+  const [selectedBetChoice, setSelectedBetChoice] = useState<'yes' | 'no' | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Filter and sort contests based on user selections
@@ -157,11 +157,13 @@ export default function ContestsPage() {
     setFilteredContests(filtered)
   }, [contests, searchQuery, selectedCategory, selectedSort])
 
-  const handleBet = (contestId, choice) => {
+  const handleBet = (contestId: string, choice: 'yes' | 'no') => {
     const contest = contests.find((c) => c.id === contestId)
-    setSelectedBetContest(contest)
-    setSelectedBetChoice(choice)
-    setIsModalOpen(true)
+    if (contest) {
+      setSelectedBetContest(contest)
+      setSelectedBetChoice(choice)
+      setIsModalOpen(true)
+    }
   }
 
   const closeModal = () => {

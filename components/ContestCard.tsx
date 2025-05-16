@@ -13,6 +13,7 @@ export function ContestCard({ contest, onBet }: any) {
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date()
+      // from contest.deadline - now to below one
       const difference = contest.deadline.getTime() - now.getTime()
 
       if (difference <= 0) {

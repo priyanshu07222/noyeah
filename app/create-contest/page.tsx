@@ -6,16 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { endOfDay, format } from "date-fns"
+import {  format } from "date-fns"
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import Calendar from "react-calendar"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
-import { AnchorProvider, BN, web3 } from "@coral-xyz/anchor"
+import {  BN, web3 } from "@coral-xyz/anchor"
 import getProgram from "@/utils/solana"
 import * as anchor from "@coral-xyz/anchor"
-import axios from "axios"
+// import axios from "axios"
 
 
 const createContest = async () => {
@@ -41,7 +41,8 @@ const createContest = async () => {
 
   useEffect(()=>{
     (async() => {
-      const contestAll = await program.account
+      // const contestAll = await program.account
+      console.log("log is")
     })()
   },[])
 
