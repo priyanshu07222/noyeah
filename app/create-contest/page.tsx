@@ -43,8 +43,7 @@ const createContest = () => {
 
   // useEffect(()=>{
   //   (async() => {
-  //     // const contestAll = await program.account
-  //     console.log("log is")
+  //     const program = await getProgram(anchorWallet)
   //   })()
   // },[])
 
@@ -113,6 +112,7 @@ const createContest = () => {
         title: title,
         entry_fee: entryFeeInLamport,
         end_time: unixTimestamp,
+        publicKey: publicKey.toBase58(),
         signature: signature
       });
 

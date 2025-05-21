@@ -8,116 +8,95 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ContestCard } from "@/components/ContestCard"
 import { PlaceBetModal } from "@/components/PlaceBetModal"
 import { Search, TrendingUp, Clock, Trophy, Filter } from "lucide-react"
+import getProgram from "@/utils/solana"
+import { useConnection, useWallet } from "@solana/wallet-adapter-react"
+import { BN, web3, AnchorProvider } from "@coral-xyz/anchor"
+import { toast } from "sonner"
+import * as anchor from "@coral-xyz/anchor"
 
-// Mock data for contests
-const mockContests = [
-  {
-    id: "1",
-    question: "Will RCB win IPL 2025?",
-    category: "cricket",
-    deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-    totalPool: 1250.75,
-    participationFee: 0.5,
-    yesCount: 356,
-    noCount: 289,
-    isHot: true,
-    isTrending: true,
-  },
-  {
-    id: "2",
-    question: "Will India win over Pakistan in the next T20 World Cup?",
-    category: "cricket",
-    deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days from now
-    totalPool: 3450.25,
-    participationFee: 1.0,
-    yesCount: 890,
-    noCount: 320,
-    isHot: true,
-    isTrending: false,
-  },
-  {
-    id: "3",
-    question: "Will Bitcoin reach $100,000 by the end of 2025?",
-    category: "crypto",
-    deadline: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000), // 180 days from now
-    totalPool: 5670.5,
-    participationFee: 2.0,
-    yesCount: 1245,
-    noCount: 876,
-    isHot: false,
-    isTrending: true,
-  },
-  {
-    id: "4",
-    question: "Will Ethereum 2.0 fully launch in 2025?",
-    category: "crypto",
-    deadline: new Date(Date.now() + 150 * 24 * 60 * 60 * 1000), // 150 days from now
-    totalPool: 2340.3,
-    participationFee: 1.5,
-    yesCount: 678,
-    noCount: 432,
-    isHot: false,
-    isTrending: false,
-  },
-  {
-    id: "5",
-    question: "Will Manchester City win the Premier League 2025-26?",
-    category: "football",
-    deadline: new Date(Date.now() + 270 * 24 * 60 * 60 * 1000), // 270 days from now
-    totalPool: 1890.45,
-    participationFee: 0.75,
-    yesCount: 567,
-    noCount: 489,
-    isHot: true,
-    isTrending: false,
-  },
-  {
-    id: "6",
-    question: "Will Lionel Messi retire from international football in 2025?",
-    category: "football",
-    deadline: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000), // 180 days from now
-    totalPool: 2150.6,
-    participationFee: 1.25,
-    yesCount: 432,
-    noCount: 678,
-    isHot: false,
-    isTrending: true,
-  },
-  {
-    id: "7",
-    question: "Will Tesla stock exceed $1000 by the end of 2025?",
-    category: "stocks",
-    deadline: new Date(Date.now() + 210 * 24 * 60 * 60 * 1000), // 210 days from now
-    totalPool: 3210.8,
-    participationFee: 1.75,
-    yesCount: 789,
-    noCount: 456,
-    isHot: true,
-    isTrending: true,
-  },
-  {
-    id: "8",
-    question: "Will Apple release a foldable iPhone in 2025?",
-    category: "tech",
-    deadline: new Date(Date.now() + 240 * 24 * 60 * 60 * 1000), // 240 days from now
-    totalPool: 1870.25,
-    participationFee: 1.0,
-    yesCount: 654,
-    noCount: 543,
-    isHot: false,
-    isTrending: true,
-  },
-]
+interface Contest {
+  id: string;
+  question: string;
+  category: string;
+  deadline: Date;
+  totalPool: number;
+  yesParticipationFee: number;
+  noParticipationFee: number;
+  yesCount: number;
+  noCount: number;
+  isHot: boolean;
+  isTrending: boolean;
+  publicKey: web3.PublicKey;
+}
 
 export default function ContestsPage() {
-  const [contests, setContests] = useState(mockContests)
-  const [filteredContests, setFilteredContests] = useState(mockContests)
+  const [contests, setContests] = useState<Contest[]>([])
+  const [filteredContests, setFilteredContests] = useState<Contest[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedSort, setSelectedSort] = useState("deadline")
-  const [selectedBetContest, setSelectedBetContest] = useState<typeof mockContests[0] | null>(null)
+  const [selectedBetContest, setSelectedBetContest] = useState<Contest | null>(null)
   const [selectedBetChoice, setSelectedBetChoice] = useState<'yes' | 'no' | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const { wallet, publicKey } = useWallet()
+  const {connection} = useConnection()
+
+  // Fetch contests from blockchain
+  useEffect(() => {
+    const fetchContests = async () => {
+      if (!wallet || !publicKey) return;
+      
+      try {
+        const anchorWallet = {
+          publicKey,
+          signTransaction: async (tx: any) => {
+            return await wallet.adapter.sendTransaction(tx, connection);
+          },
+          signAllTransactions: async (txs: any[]) => {
+            return Promise.all(txs.map(tx => wallet.adapter.sendTransaction(tx, connection)));
+          },
+        } as anchor.Wallet;
+
+        const program = await getProgram(anchorWallet)
+        
+        // Get all program accounts
+        /// @ts-ignore
+        const allContests = await program.account.createContestState.all()
+        console.log("fucking my head")
+        console.log(allContests)
+        
+        const formattedContests: Contest[] = allContests.map((contest: any) => {
+          const data = contest.account
+          return {
+            id: contest.publicKey.toString(),
+            question: data.title,
+            category: "general", // You might want to add category to your on-chain data
+            deadline: new Date(data.endTime.toNumber() * 1000),
+            totalPool: data.totalPool.toNumber() / 1e9, // Convert lamports to SOL
+            yesParticipationFee: data.yesEntryPrice.toNumber() / 1e9, // Convert lamports to SOL
+            noParticipationFee: data.noEntryPrice.toNumber() / 1e9,
+            yesCount: data.yesParticipants.toNumber(),
+            noCount: data.noParticipants.toNumber(),
+            isHot: data.yesParticipants.toNumber() + data.noParticipants.toNumber() > 100,
+            isTrending: data.totalPool.toNumber() > 100 * 1e9, // More than 100 SOL in pool
+            publicKey: contest.publicKey
+          }
+        })
+
+        setContests(formattedContests)
+        setFilteredContests(formattedContests)
+      } catch (error) {
+        console.error("Error fetching contests:", error)
+        toast.error("Failed to fetch contests")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchContests()
+  }, [wallet, publicKey])
 
   // Filter and sort contests based on user selections
   useEffect(() => {
@@ -145,7 +124,7 @@ export default function ContestsPage() {
         filtered.sort((a, b) => b.totalPool - a.totalPool)
         break
       case "fee":
-        filtered.sort((a, b) => a.participationFee - b.participationFee)
+        filtered.sort((a, b) => a.yesParticipationFee - b.noParticipationFee)
         break
       case "popularity":
         filtered.sort((a, b) => b.yesCount + b.noCount - (a.yesCount + a.noCount))
@@ -170,6 +149,17 @@ export default function ContestsPage() {
     setIsModalOpen(false)
     setSelectedBetContest(null)
     setSelectedBetChoice(null)
+  }
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mx-auto"></div>
+          <p className="mt-4">Loading contests...</p>
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -203,11 +193,7 @@ export default function ContestsPage() {
                 </SelectTrigger>
                 <SelectContent className="bg-gray-900 border-gray-700">
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="cricket">Cricket</SelectItem>
-                  <SelectItem value="football">Football</SelectItem>
-                  <SelectItem value="crypto">Crypto</SelectItem>
-                  <SelectItem value="stocks">Stocks</SelectItem>
-                  <SelectItem value="tech">Tech</SelectItem>
+                  <SelectItem value="general">General</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={selectedSort} onValueChange={setSelectedSort}>
@@ -228,18 +214,9 @@ export default function ContestsPage() {
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="grid grid-cols-4 max-w-md mb-8 bg-gray-400 gap-2">
               <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="trending">
-                {/* <TrendingUp className="mr-1 h-4 w-4" /> */}
-                Trending
-              </TabsTrigger>
-              <TabsTrigger value="ending-soon" className="">
-                {/* <Clock className="mr-1 h-4 w-4" /> */}
-                Ending Soon
-              </TabsTrigger>
-              <TabsTrigger value="high-stakes">
-                {/* <Trophy className="mr-1 h-4 w-4 mx-2" /> */}
-                High Stakes
-              </TabsTrigger>
+              <TabsTrigger value="trending">Trending</TabsTrigger>
+              <TabsTrigger value="ending-soon">Ending Soon</TabsTrigger>
+              <TabsTrigger value="high-stakes">High Stakes</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="mt-0">
@@ -286,7 +263,7 @@ export default function ContestsPage() {
             <TabsContent value="high-stakes" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredContests
-                  .sort((a, b) => b.participationFee - a.participationFee)
+                  .sort((a, b) => b.yesParticipationFee - a.noParticipationFee)
                   .slice(0, 6)
                   .map((contest) => (
                     <ContestCard key={contest.id} contest={contest} onBet={handleBet} />

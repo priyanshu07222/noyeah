@@ -2,13 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const Navbar = () => {
   // const { connected } = useWallet();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showMobileNav, setShowMobileNav] = useState(false)
+  const [showMobileNav, setShowMobileNav] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +21,32 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const WalletButton = () => (
+    <WalletMultiButton style={{
+      backgroundColor: "#f9f9f9",
+      color: "black",
+      borderRadius: "10px",
+      padding: "2px 18px",
+      fontSize: "14px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }} />
+  );
+
+  const MobileWalletButton = () => (
+    <WalletMultiButton style={{
+      backgroundColor: "#000",
+      color: "white",
+      borderRadius: "10px",
+      padding: "2px 18px",
+      fontSize: "14px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }} className="!bg-foreground !text-background hover:!opacity-90 w-full" />
+  );
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${
@@ -62,18 +92,7 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center justify-between ">
             <div className="ml-4 flex">
-                {/* <WalletMultiButton className="!bg-foreground !text-background hover:!opacity-90" /> */}
-                <WalletMultiButton style={{
-                  backgroundColor: "#f9f9f9",
-                  color: "black",
-                  borderRadius: "10px",
-                  padding: "2px 18px",
-                  fontSize: "14px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }} />
-
+              {isMounted && <WalletButton />}
             </div>
           </div>
 
@@ -123,7 +142,7 @@ const Navbar = () => {
             Profile
           </Link>
           <Link
-            href="/create-poll"
+            href="/create-contest"
             className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
           >
             Create contest
@@ -135,16 +154,7 @@ const Navbar = () => {
             Bid
           </Link>
           <div className="mt-4 px-3">
-            <WalletMultiButton style={{
-                  backgroundColor: "#000",
-                  color: "white",
-                  borderRadius: "10px",
-                  padding: "2px 18px",
-                  fontSize: "14px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }} className="!bg-foreground !text-background hover:!opacity-90 w-full" />
+            {isMounted && <MobileWalletButton />}
           </div>
         </div>
       </div>

@@ -7,9 +7,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
     console.log("inside the api/create-contest")
-    const {title, entry_fee, end_time, signature} = await req.json();
+    const {title, entry_fee, end_time, signature, publickey} = await req.json();
 
-    if(!title || !entry_fee || !end_time || !signature){
+    if(!title || !entry_fee || !end_time || !signature || !publickey){
         return NextResponse.json({
             message: "All fields are required"
         })
@@ -19,6 +19,16 @@ export async function POST(req: Request) {
 
     // convert the dateTime into unixtimestamp and BN
     // convert Lamport into BN
+
+    await prisma.contest.create({
+        data: {
+            title: title,
+            startTime: new Date(),
+            endTime: end_time,
+            entryAmount: entry_fee,
+            creator: publickey
+        }
+    })
 
     return NextResponse.json({
         success: true,
