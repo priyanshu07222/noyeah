@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 // import { ArrowRight } from "lucide-react"
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export function CallToAction() {
 
@@ -35,29 +36,19 @@ export function CallToAction() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <WalletMultiButton  style={{
-                  background: "#f9f9f9",
-                  color: "black",
-                  borderRadius: "10px",
-                  padding: "4px 32px",
-                  paddingTop: "20px",
-                  fontSize: "16px",
-                //   display: "flex",
-                //   alignItems: "center",
-                //   justifyContent: "center",
-                  
-                }} />
-              {/* <Button
-                onClick={handleConnectWallet}
-                className="bg-gradient-to-r from-slate-800 via-gray-800 to-gray-900 text-white text-lg px-8 py-6 h-auto rounded-xl hover:opacity-90 animate-pulse-glow group"
-                size="lg"
-              >
-                Connect Wallet & Start Betting
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button> */}
+              <SignedIn>
+                <WalletMultiButton className="!bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90" />
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-400 to-gray-500 cursor-pointer text-white hover:opacity-90 transition-all duration-300 text-lg">
+                    Get Started Now
+                  </button>
+                </SignInButton>
+              </SignedOut>
               <Button
                 variant="outline"
-                className="border-gray-600 text-black text-lg font-bold px-8 py-3 h-auto rounded-xl hover:bg-black hover:text-white transition-all duration-300"
+                className="border-gray-600 text-black text-lg px-8 cursor-pointer py-3 h-auto rounded-xl hover:opacity-90 transition-all duration-300"
                 size="lg"
               >
                 Learn More

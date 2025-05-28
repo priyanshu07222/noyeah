@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 Solana Prediction Market
 
-## Getting Started
+A decentralized prediction market dApp built on the Solana blockchain. Users can participate in prediction contests by staking SOL and selecting an outcome. Winners are rewarded based on a bonding curve pricing model and correct predictions.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# 📍Deployed On Devnet
+2S2ztAYPLzQN3McM2jJqNhoycahBMpyEc1tvNLBdR2qv
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Signature: 5Z4maZyXe8EC8o878PPgUNagA7o8Co2PPM3aRmP1QYu5P7HyZfefpjkuHF5NjLiBAYmsvHGx7eMpoNau5VL2Ksvz
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 📈 Bonding curve pricing (dynamic price based on total participation)
+- 🧠 Multiple choice prediction contests
+- 🎯 Verifiable contest resolution via admin or oracle
+- 💰 Winner payout based on correct prediction
+- 🔐 Built using Anchor framework
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠 Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Solana** – Blockchain platform
+- **Anchor** – Framework for Solana smart contracts
+- **Rust** – Smart contract programming language
+- **TypeScript + React** *(optional)* – Frontend for interacting with the contract
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📦 Smart Contract Overview
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Accounts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `Contest`
+  - `id`: unique ID for the contest
+  - `question`: the prediction question
+  - `options`: available choices
+  - `total_stake`: total SOL staked
+  - `status`: open, resolved
+  - `correct_option`: set after contest resolution
+
+- `UserParticipation`
+  - `user`: user's wallet
+  - `contest_id`: ID of the contest
+  - `selected_option`: user’s chosen answer
+  - `amount`: amount staked
+
+---
+
+## 📉 Bonding Curve Pricing
+
+Dynamic pricing is used to calculate the stake amount using a simple bonding curve formula:
+

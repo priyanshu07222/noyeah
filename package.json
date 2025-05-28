@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.9.0",
+    "@clerk/nextjs": "^6.19.5",
     "@coral-xyz/anchor": "^0.31.1",
     "@prisma/client": "^6.7.0",
     "@radix-ui/react-dialog": "^1.1.13",

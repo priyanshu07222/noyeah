@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   // const { connected } = useWallet();
@@ -92,7 +93,16 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center justify-between ">
             <div className="ml-4 flex">
-              {isMounted && <WalletButton />}
+              <SignedIn>
+                <WalletButton />
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-gray-400 to-gray-700 text-white hover:opacity-90">
+                    Sign In
+                  </button>
+                </SignInButton>
+              </SignedOut>
             </div>
           </div>
 
@@ -154,7 +164,16 @@ const Navbar = () => {
             Bid
           </Link>
           <div className="mt-4 px-3">
-            {isMounted && <MobileWalletButton />}
+            <SignedIn>
+              <MobileWalletButton />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 text-white hover:opacity-90">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
           </div>
         </div>
       </div>
