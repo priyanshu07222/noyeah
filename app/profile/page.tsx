@@ -70,7 +70,6 @@ export default function ProfilePage() {
           const betData = account.account;
           return {
             id: account.publicKey.toBase58(),
-            // question: betData.question,
             amount: betData.amount.toNumber() / 1e9, // Convert lamports to SOL
             choice: betData.choice ? "yes" : "no",
             status: getBetStatus(betData),
@@ -220,7 +219,7 @@ export default function ProfilePage() {
                               >
                                 <div className="grid gap-1">
                                   <div className="flex flex-wrap items-center gap-2">
-                                    <h3 className="font-medium break-words">{bet.question}</h3>
+                                    <h3 className="font-medium break-words">Bet {bet.id.slice(0, 8)}...</h3>
                                     {getStatusBadge(bet.status)}
                                   </div>
                                   <div className="text-sm text-gray-400">
@@ -266,7 +265,7 @@ export default function ProfilePage() {
                                 >
                                   <div className="grid gap-1">
                                     <div className="flex flex-wrap items-center gap-2">
-                                      <h3 className="font-medium break-words">{bet.question}</h3>
+                                      <h3 className="font-medium break-words">Bet {bet.id.slice(0, 8)}...</h3>
                                       {getStatusBadge(bet.status)}
                                     </div>
                                     <div className="text-sm text-gray-400">
@@ -310,7 +309,7 @@ export default function ProfilePage() {
                                 >
                                   <div className="grid gap-1">
                                     <div className="flex flex-wrap items-center gap-2">
-                                      <h3 className="font-medium break-words">{bet.question}</h3>
+                                      <h3 className="font-medium break-words">Bet {bet.id.slice(0, 8)}...</h3>
                                       {getStatusBadge(bet.status)}
                                     </div>
                                     <div className="text-sm text-gray-400">

@@ -1,17 +1,22 @@
-import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
+import { Metadata, ResolvingMetadata } from 'next'
+import BidPageClient from './BidPageClient'
 
-export default function BidPage({ params }: { params: { id: string } }) {
-  return (
-    <>
-      <SignedIn>
-        <div className="container mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4">Place Your Bid</h1>
-          {/* Your bid form will go here */}
-        </div>
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </>
-  );
+type Props = {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { id } = await params
+  return {
+    title: `Bid on Contest ${id}`,
+  }
+}
+
+export default async function Page({ params }: Props) {
+  const { id } = await params
+  return <BidPageClient params={{ id }} />;
 } 
