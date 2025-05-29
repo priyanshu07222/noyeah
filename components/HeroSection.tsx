@@ -40,7 +40,7 @@ export default function HeroSection() {
           </SignedIn>
           <SignedOut>
             <SignInButton mode="modal">
-              <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 text-white hover:opacity-90 text-lg">
+              <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-gray-400 to-gray-700 text-white hover:opacity-90 text-lg">
                 Get Started
               </button>
             </SignInButton>

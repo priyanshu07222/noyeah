@@ -147,24 +147,28 @@ const Navbar = () => {
           <Link
             href="/"
             className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+            onClick={() => setShowMobileNav(false)}
           >
             Home
           </Link>
           <Link
             href="/profile"
             className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+            onClick={() => setShowMobileNav(false)}
           >
             Profile
           </Link>
           <Link
             href="/create-contest"
             className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+            onClick={() => setShowMobileNav(false)}
           >
             Create contest
           </Link>
           <Link
             href="/bid"
             className="block px-3 py-2 rounded-md text-base hover:bg-foreground/10"
+            onClick={() => setShowMobileNav(false)}
           >
             Bid
           </Link>
