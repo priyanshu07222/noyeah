@@ -62,20 +62,25 @@ export default function ProfilePage() {
 
         console.log(userBetsAccounts, "okay so far");
 
-        // Transform the on-chain data to our Bet interface
-        const bets: Bet[] = userBetsAccounts.map((account: any) => {
-          const betData = account.account;
-          const amountInSol = betData.amount.toNumber() / anchor.web3.LAMPORTS_PER_SOL;
-          
-          return {
-            id: account.publicKey.toBase58(),
-            amount: amountInSol,
-            choice: betData.option && betData.option.yes ? "yes" : "no",
-            status: getBetStatus(betData),
-            date: new Date().toISOString().split('T')[0],
-            reward: null, // We'll calculate this based on win/lose status
-          };
-        });
+        // Filter bets for the connected wallet and transform the data
+        const bets: Bet[] = userBetsAccounts
+          .filter((account: any) => {
+            // Check if the bet's participant matches the connected wallet
+            return account.account.participant.toBase58() === publicKey.toBase58();
+          })
+          .map((account: any) => {
+            const betData = account.account;
+            const amountInSol = betData.amount.toNumber() / anchor.web3.LAMPORTS_PER_SOL;
+            
+            return {
+              id: account.publicKey.toBase58(),
+              amount: amountInSol,
+              choice: betData.option && betData.option.yes ? "yes" : "no",
+              status: getBetStatus(betData),
+              date: new Date().toISOString().split('T')[0],
+              reward: null, // We'll calculate this based on win/lose status
+            };
+          });
 
         // Calculate stats
         const totalBets = bets.length;
