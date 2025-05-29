@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignOutButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   // const { connected } = useWallet();
@@ -92,9 +92,14 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center justify-between ">
-            <div className="ml-4 flex">
+            <div className="ml-4 flex items-center space-x-4">
               <SignedIn>
                 <WalletButton />
+                <SignOutButton>
+                  <button className="px-6 py-3 rounded-lg bg-gradient-to-r cursor-pointer from-red-400 to-red-700 text-white hover:opacity-90">
+                    Sign Out
+                  </button>
+                </SignOutButton>
               </SignedIn>
               <SignedOut>
                 <SignInButton mode="modal">
@@ -163,13 +168,18 @@ const Navbar = () => {
           >
             Bid
           </Link>
-          <div className="mt-4 px-3">
+          <div className="mt-4 px-3 space-y-2">
             <SignedIn>
               <MobileWalletButton />
+              <SignOutButton>
+                <button className="w-full px-4 my-4 py-2 rounded-lg bg-gradient-to-r from-red-400 to-red-700 text-white hover:opacity-90">
+                  Sign Out
+                </button>
+              </SignOutButton>
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal">
-                <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 text-white hover:opacity-90">
+                <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-gray-400 to-gray-600 text-white hover:opacity-90">
                   Sign In
                 </button>
               </SignInButton>
