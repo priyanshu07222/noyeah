@@ -54,42 +54,53 @@ export default function ProfilePage() {
       try {
         setIsLoading(true);
         
-        // Initialize the program
-        // const provider = new AnchorProvider(connection, window.solana, {});
-        // const programId = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID!);
         const program = await getProgram(anchorWallet);
 
         // Fetch all bets for the user
         // @ts-ignore
         const userBetsAccounts = await program.account.participantState.all();
 
-        console.log(userBetsAccounts);
+        console.log(userBetsAccounts, "okay so far");
 
         // Transform the on-chain data to our Bet interface
         const bets: Bet[] = userBetsAccounts.map((account: any) => {
           const betData = account.account;
+          const amountInSol = betData.amount.toNumber() / anchor.web3.LAMPORTS_PER_SOL;
+          
           return {
             id: account.publicKey.toBase58(),
-            amount: betData.amount.toNumber() / 1e9, // Convert lamports to SOL
-            choice: betData.choice ? "yes" : "no",
+            amount: amountInSol,
+            choice: betData.option && betData.option.yes ? "yes" : "no",
             status: getBetStatus(betData),
-            date: new Date(betData.timestamp.toNumber() * 1000).toISOString().split('T')[0],
-            reward: betData.reward ? betData.reward.toNumber() / 1e9 : null,
+            date: new Date().toISOString().split('T')[0],
+            reward: null, // We'll calculate this based on win/lose status
           };
         });
 
-        setUserBets(bets);
-        
         // Calculate stats
         const totalBets = bets.length;
         const wins = bets.filter(bet => bet.status === 'win').length;
         const winRate = totalBets > 0 ? (wins / totalBets) * 100 : 0;
+        
+        // Calculate net profit (losses are negative)
         const netProfit = bets.reduce((acc, bet) => {
-          if (bet.status === 'win') return acc + (bet.reward || 0);
-          if (bet.status === 'lose') return acc - bet.amount;
+          if (bet.status === 'win') {
+            // For wins, we add the winnings (same as bet amount)
+            return acc + bet.amount;
+          } else if (bet.status === 'lose') {
+            // For losses, we subtract the bet amount
+            return acc - bet.amount;
+          }
+          // For pending bets, we don't affect the profit
           return acc;
         }, 0);
 
+        setUserBets(bets.map(bet => ({
+          ...bet,
+          // Set reward only for winning bets
+          reward: bet.status === 'win' ? bet.amount * 2 : null
+        })));
+        
         setStats({
           totalBets,
           winRate,
@@ -107,8 +118,9 @@ export default function ProfilePage() {
   }, [publicKey, connection]);
 
   const getBetStatus = (betData: any): "win" | "lose" | "pending" => {
-    if (!betData.isResolved) return "pending";
-    return betData.isWinner ? "win" : "lose";
+    if (betData.hasClaimed) return "win";
+    if (!betData.isWinner && betData.contest) return "lose";
+    return "pending";
   };
 
   const copyAddress = () => {
