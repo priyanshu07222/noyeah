@@ -16,7 +16,6 @@ import {  BN, web3 } from "@coral-xyz/anchor"
 import getProgram from "@/utils/solana"
 import * as anchor from "@coral-xyz/anchor"
 import { LAMPORTS_PER_SOL, sendAndConfirmRawTransaction } from "@solana/web3.js"
-import axios from "axios"
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 // import axios from "axios"
 
