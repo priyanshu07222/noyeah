@@ -13,6 +13,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 // import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import * as anchor from "@coral-xyz/anchor"
 import getProgram from "@/utils/solana"
+import { LAMPORTS_PER_SOL } from "@solana/web3.js"
 
 
 export function PlaceBetModal({ isOpen, onClose, contest, choice }: any) {
@@ -68,10 +69,10 @@ export function PlaceBetModal({ isOpen, onClose, contest, choice }: any) {
     let option;
 
     if (choice === "yes") {
-      entryFee = new anchor.BN(contest.yesParticipationFee + 1000000000)
+      entryFee = new anchor.BN(contest.yesParticipationFee + 100000000)
       option = {yes: {}}
     } else if (choice === "no"){
-      entryFee = new anchor.BN(contest.noParticipationFee + 1000000000)
+      entryFee = new anchor.BN(contest.noParticipationFee + 100000000)
       option = {no: {}}
     }
     console.log("contest", contest.yesParticipationFee)
@@ -98,12 +99,11 @@ export function PlaceBetModal({ isOpen, onClose, contest, choice }: any) {
       const signature = await connection.sendRawTransaction(signedTx.serialize());
       await connection.confirmTransaction(signature, 'confirmed');
       setTxnSig(signature)
-      console.log("participatin", signature)
-      toast(`You bet ${contest.participationFee} SOL on "${choice}" for "${contest.question}"`)
+      toast.success(`You bet ${entryFee/LAMPORTS_PER_SOL} SOL on "${choice}" for "${contest.question} successfully"`)
       setStep(3)
     } catch (error) {
       console.error("Transaction failed:", error);
-      toast.error("Failed to create contest. Please try again.");
+      toast.error("Failed to place bet. Please try again.");
     }
   }
 
@@ -308,42 +308,45 @@ export function PlaceBetModal({ isOpen, onClose, contest, choice }: any) {
       case 3:
         return (
           <>
-            <div className="grid gap-6 py-4">
-              <div className="flex flex-col items-center justify-center py-6">
+            <div className="grid gap-4 py-4">
+              <div className="flex flex-col items-center justify-center">
                 <div className="w-16 h-16 rounded-full bg-green-900/30 flex items-center justify-center mb-4">
                   <CheckCircle className="h-8 w-8 text-green-500" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Bet Placed Successfully!</h3>
-                <p className="text-gray-400 text-center mb-6">
+                <p className="text-gray-400 text-center mb-4 text-sm">
                   Your bet has been placed and confirmed on the blockchain
                 </p>
 
-                <div className="w-full p-4 rounded-lg bg-gray-900/50 mb-6">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm text-gray-400">Contest</span>
-                    <span className="text-right max-w-[200px] truncate">{contest.question}</span>
+                <div className="w-full space-y-3 p-4 rounded-lg bg-gray-900/50">
+                  <div className="flex flex-col space-y-1">
+                    <span className="text-xs text-gray-400">Contest</span>
+                    <span className="text-sm break-words">{contest.question}</span>
                   </div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm text-gray-400">Your Prediction</span>
-                    <span className={choice === "yes" ? "text-green-500" : "text-red-500"}>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Your Prediction</span>
+                    <span className={`text-sm ${choice === "yes" ? "text-green-500" : "text-red-500"}`}>
                       {choice === "yes" ? "Yes" : "No"}
                     </span>
                   </div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm text-gray-400">Amount</span>
-                    <span>{contest.yesParticipationFee.toFixed(2)} SOL</span>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Amount</span>
+                    <span className="text-sm">{contest.yesParticipationFee.toFixed(2)} SOL</span>
                   </div>
-                  {/* <div className="flex justify-between mb-2">
-                    <span className="text-sm text-gray-400">Potential Win</span>
-                    <span className="text-green-500">{calculatePotentialWin()} SOL</span>
-                  </div> */}
-                  <div className="flex justify-between pt-2 border-t border-gray-800">
-                    <span className="font-bold">Transaction ID</span>
-                    <span className="font-mono text-xs">{txnSig}</span>
+                  
+                  <div className="pt-2 border-t border-gray-800">
+                    <span className="text-xs text-gray-400 block mb-1">Transaction ID</span>
+                    <span className="font-mono text-xs break-all">{txnSig}</span>
                   </div>
                 </div>
 
-                <Button className="w-full bg-black" variant="outline" onClick={onClose}>
+                <Button 
+                  className="w-full bg-black mt-4" 
+                  variant="outline" 
+                  onClick={onClose}
+                >
                   View All Contests
                 </Button>
               </div>
