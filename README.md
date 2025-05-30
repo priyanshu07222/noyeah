@@ -55,3 +55,5 @@ Signature: 5Z4maZyXe8EC8o878PPgUNagA7o8Co2PPM3aRmP1QYu5P7HyZfefpjkuHF5NjLiBAYmsv
 
 Dynamic pricing is used to calculate the stake amount using a simple bonding curve formula:
 
+## Contract Repository
+https://github.com/priyanshu07222/noyeah-contract
